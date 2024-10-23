@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "wfkaApp",
-    "slug": "wfkaApp",
+    "name": "wfkApp",
+    "slug": "wfkApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,13 +12,17 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "bundleIdentifier": "com.wfka.wfka"
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.wfkApp.wfkApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -26,7 +30,19 @@
     "plugins": [
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
-
-    ]
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "615ea022-1ab4-4b01-8167-f9c101b60214"
+      }
+    }
   }
 }

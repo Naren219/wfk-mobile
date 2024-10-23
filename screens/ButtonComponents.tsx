@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   deleteButtonText: {
-    fontSize: 18,
+    fontSize: 15,
     color: "red",
     fontWeight: "bold",
     alignSelf: "center",

@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Linking } from 'react-native';
-import {
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import auth from '@react-native-firebase/auth';
 import { FirebaseError } from "firebase/app";
 import { useNavigation } from '@react-navigation/native';
 import { AuthStackParams } from '../App';
@@ -19,7 +16,7 @@ export function LoginScreen() {
 
     const loginUser = async () => {
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        await auth().signInWithEmailAndPassword(email, password);
       } catch (error) {
         if ((error as FirebaseError).code === 'auth/invalid-email' || (error as FirebaseError).code === 'auth/wrong-password') {
           setError('Your email or password was incorrect');
