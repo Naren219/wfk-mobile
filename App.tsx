@@ -10,13 +10,16 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import RegisterForm from './screens/RegisterForm';
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { StripeProvider } from '@stripe/stripe-react-native';
+import { Prices } from './constants';
 
 export type AuthStackParams = {
   Login: undefined;
   Signup: undefined;
   RegisterForm: {
     email: string,
-    password: string
+    password: string,
+    currency: keyof Prices,
+    inWFK: string
   };
   resetPassword: undefined;
 }

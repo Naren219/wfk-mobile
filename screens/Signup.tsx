@@ -5,6 +5,8 @@ import { AuthStackParams } from '../App';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack/lib/typescript/src/types';
 import { AppButton } from './ButtonComponents';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Picker } from '@react-native-picker/picker';
+import { Prices } from '../constants';
 
 type signupScreenProp = NativeStackNavigationProp<AuthStackParams, 'Signup'>;
 
@@ -13,6 +15,9 @@ export function SignupScreen() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [currency, setCurrency] = useState<keyof Prices>('usd')
+    const [inWFK, setInWFK] = useState<string>('no')
+
     const navigation = useNavigation<signupScreenProp>();
     
     // useEffect(() => {
@@ -79,10 +84,42 @@ export function SignupScreen() {
             selectionColor={'white'}
             style={styles.input}
           />
+          <View style={styles.specialInputGroup}>
+            <Text style={styles.infoText}>
+              Select Location:
+            </Text>
+
+            <Picker
+              selectedValue={currency}
+              style={styles.picker}
+              onValueChange={setCurrency}
+            >
+              <Picker.Item label="India" value="inr" />
+              <Picker.Item label="US" value="usd" />
+              <Picker.Item label="Great Britain" value="gbp" />
+              <Picker.Item label="Australia" value="aud" />
+              <Picker.Item label="UAE" value="aed" />
+            </Picker>
+          </View>
+
+          <View style={styles.specialInputGroup}>
+            <Text style={styles.infoText}>
+              Part of WFK?
+            </Text>
+
+            <Picker
+              selectedValue={inWFK}
+              style={styles.picker}
+              onValueChange={setInWFK}
+            >
+              <Picker.Item label="Yes" value="yes" />
+              <Picker.Item label="No" value="no" />
+            </Picker>
+          </View>
           <AppButton
             title="Next"
             // disabled={error !== ""}
-            onPress={() => navigation.navigate('RegisterForm', {email, password})}
+            onPress={() => navigation.navigate('RegisterForm', { email, password, currency, inWFK })}
           />
         </View>
       </SafeAreaView>
@@ -90,6 +127,16 @@ export function SignupScreen() {
   }
 
 const styles = StyleSheet.create({
+  infoText: {
+    fontSize: 15,
+    color: "#ccc",
+    marginTop: 4
+  },
+  specialInputGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginLeft: 5
+  },
   contrastBg: { 
     borderWidth: 0.5,
     overflow: 'hidden',
@@ -139,5 +186,15 @@ const styles = StyleSheet.create({
   link: {
     color: '#bec7ed',
     marginBottom: 20,
+  },
+  picker: {
+    flex: 1,
+    height: 40,
+    transform: [
+      { scaleX: 1 }, 
+      { scaleY: 1 },
+    ],
+    color: "#ccc",
+    marginTop: -12
   },
 });

@@ -8,9 +8,10 @@ import { useStripe } from '@stripe/stripe-react-native';
 import auth from '@react-native-firebase/auth';
 import { getFunctions, httpsCallable } from '@react-native-firebase/functions';
 import firestore, { doc, setDoc } from '@react-native-firebase/firestore';
+import { academies, ages, currencySymbols, events_dict, events_pricing, Prices } from '../constants';
+import { Divider } from '@rneui/themed';
 
 /*
-  update the cost info based on user location (could select on previous screen? -- yes)
   inr
 usd
 gbp
@@ -19,7 +20,9 @@ aed
 */
 
 const RegisterForm = ({ route }: any) => {
-  const { email, password } = route.params
+  const { email, password, currency, inWFK } = route.params
+  const currency_value: keyof Prices = currency
+
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [parentName, setParentName] = useState('');
@@ -28,71 +31,7 @@ const RegisterForm = ({ route }: any) => {
   const [additionalNotes, setAdditionalNotes] = useState('');
   const [competitors, setCompetitors] = useState([{ name: '', gender: '', level: '', academy: '', ageGroup: '', events: '' }]);
   const [amount, setAmount] = useState("000")
-  const [currency, setCurrency] = useState<keyof Prices>('usd')
 
-  const academies = ["Academy of Kalari Adimurai", "Kalari Academy of Texas Payil", "Subashini Kalari Group", "Queen City ATA Martial Arts", "Tamil Tutor Inc.", "World Federation Of Kalari"]
-  const ages = ["6 Years", "7 to 8 Years", "9 to 10 Years", "11 to 12 Years", "13 to 15 Years", "16 to 18 Years", "18 to 25 Years", "26 to 30 Years", "31 to 35 Years", "36 to 40 Years", "41 to 45 Years", "46 to 50 Years", "51 Years and up"]
-
-  type Prices = {
-    inr: number;
-    usd: number;
-    gbp: number;
-    aud: number;
-    aed: number;
-  };
-  
-  type EventPricing = {
-    [event: string]: {
-      name: string;
-      prices: Prices;
-    };
-  };
-
-  const events = ["Silambam", "Kalari Chuvadu & Silambam", "Kalari Chuvadu & Silambam & Vel Kambu", "K.C. & Silambam & V.K. & Kalari Payattu"]
-  const events_dict = {"Silambam": "S", "Kalari Chuvadu & Silambam": "KCS", "Kalari Chuvadu & Silambam & Vel Kambu": "KCSVK", "K.C. & Silambam & V.K. & Kalari Payattu": "KCSVKKP"}
-  const events_pricing: EventPricing = {
-    "S": {
-      name: "S",
-      prices: {
-        inr: 10000,
-        usd: 1000,
-        gbp: 1000,
-        aud: 12000,
-        aed: 12000
-      }
-    },
-    "KCS": {
-      name: "KCS",
-      prices: {
-        inr: 10000,
-        usd: 1000,
-        gbp: 1000,
-        aud: 12000,
-        aed: 12000
-      }
-    },
-    "KCSVK": {
-      name: "KCSVK",
-      prices: {
-        inr: 10000,
-        usd: 1000,
-        gbp: 1000,
-        aud: 12000,
-        aed: 12000
-      }
-    },
-    "KCSVKKP": {
-      name: "KCSVKKP",
-      prices: {
-        inr: 10000,
-        usd: 1000,
-        gbp: 1000,
-        aud: 12000,
-        aed: 12000
-      }
-    }
-  };
-  
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   const initializePaymentSheet = async () => {
@@ -155,7 +94,7 @@ const RegisterForm = ({ route }: any) => {
   const handleEventChange = (index: number, selectedEvent: any) => {
     handleInputChange(index, 'events', selectedEvent)
     // Add the new event cost with existing cost
-    let newVal = Number(amount)+events_pricing[selectedEvent].prices[currency]
+    let newVal = Number(amount)+events_pricing[selectedEvent].prices[currency_value]
     setAmount(newVal.toString())
   }
 
@@ -182,16 +121,34 @@ const RegisterForm = ({ route }: any) => {
       }
     }
   };
+
+  const searchByValue = (obj: any, value: any) => {
+    // Get the keys of the object and filter them by the value
+    return Object.keys(obj).find(key => obj[key] === value);
+  };
   
   return (
     <SafeAreaView style={{ flex: 1, marginHorizontal: 20 }}>
-      <Text style={styles.infoText}>
-        Event Pricing{"\n"}
-        - Silambam -&gt; $50 / 4200{"\n"}
-        - Kalari Chuvadu & Silambam -&gt; $60{"\n"}
-        - Kal. Chuv. & Silambam & Vel Kambu -&gt; $75{"\n"}
-        - Kal. Chuv. & Silambam & V.K. & Kalari Payattu -&gt; $100{"\n"}
-      </Text>
+      <View style={[styles.shadowProp, styles.card, { marginBottom: 15 }]}>
+        <Text style={[styles.infoText, { fontSize: 18 }]}>
+          Event Pricing
+        </Text>
+
+        {Object.keys(events_pricing).map((key) => {
+          const event = events_pricing[key];
+          const fullName = searchByValue(events_dict, event.name)
+          
+          return (
+            <View key={event.name}>
+              <Text style={styles.infoText}>
+                {fullName}: {currencySymbols[currency_value]}
+                {(event.prices[currency_value] / 100).toFixed(2).toString()}
+              </Text>
+            </View>
+          );
+        })}
+      </View>
+
       <TextInput
         value={parentName}
         onChangeText={setParentName}
@@ -224,25 +181,6 @@ const RegisterForm = ({ route }: any) => {
         placeholderTextColor="#ccc"
         style={[styles.inputMain, { height: 60 }]}
       />
-      
-
-      <View style={styles.specialInputGroup}>
-        <Text style={[styles.infoText, { marginTop: 4 }]}>
-          Select Location:
-        </Text>
-
-        <Picker
-          selectedValue={currency}
-          style={[styles.picker, {marginTop: -10}]}
-          onValueChange={setCurrency}
-        >
-          <Picker.Item label="India" value="inr" />
-          <Picker.Item label="US" value="usd" />
-          <Picker.Item label="Great Britain" value="gbp" />
-          <Picker.Item label="Australia" value="aud" />
-          <Picker.Item label="UAE" value="aed" />
-        </Picker>
-      </View>
             
       <KeyboardAvoidingView
         style={styles.keyboardAvoidingView}
@@ -274,14 +212,14 @@ const RegisterForm = ({ route }: any) => {
                 </Picker>
               </View>
 
-              <View style={[styles.inputGroup, { width: 200 }]}>
+              <View style={[styles.inputGroup, { width: 250 }]}>
                 <TextInput
                   editable
                   multiline
                   maxLength={40}
                   keyboardType='numeric'
                   style={[styles.input, { height: 60 }]}
-                  placeholder={"Completed Level \n(as of 4/1/25)"}
+                  placeholder={"Completed Level (as of 4/1/25)"}
                   value={competitor.level}
                   onChangeText={(value) => handleInputChange(index, 'level', value)}
                 />
@@ -340,6 +278,18 @@ const RegisterForm = ({ route }: any) => {
 export default RegisterForm
 
 const styles = StyleSheet.create({
+  card: {
+    backgroundColor: '#56667A',
+    borderRadius: 8,
+    padding: 15,
+    width: '100%',
+  },
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {width: -2, height: 4},
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+  },
   keyboardAvoidingView: {
     flex: 1,
   },
@@ -402,18 +352,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  card: {
-    backgroundColor: '#56667A',
-    borderRadius: 8,
-    padding: 15,
-    width: '100%',
-  },
-  shadowProp: {
-    shadowColor: '#171717',
-    shadowOffset: {width: -2, height: 4},
-    shadowOpacity: 0.5,
-    shadowRadius: 3,
-  },
   header: {
     textAlign: "center",
     alignSelf: 'center',
@@ -438,6 +376,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   infoText: {
-    fontSize: 15
+    fontSize: 15,
+    color: "#ccc"
   }
 });
