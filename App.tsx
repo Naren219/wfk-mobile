@@ -98,7 +98,7 @@ export default function App() {
   };
 
   return (
-    <StripeProvider publishableKey={process.env.STRIPE_PUBLISHABLE_KEY as string}>
+    <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY as string}>
       <NavigationContainer><RenderContent /></NavigationContainer>
     </StripeProvider>
   )

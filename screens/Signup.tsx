@@ -20,27 +20,27 @@ export function SignupScreen() {
 
     const navigation = useNavigation<signupScreenProp>();
     
-    // useEffect(() => {
-    //   if (password !== confirmPassword)
-    //     setError("Passwords don't match");
-    //   else
-    //     setError('')
-    // }, [confirmPassword])
+    useEffect(() => {
+      if (password !== confirmPassword)
+        setError("Passwords don't match");
+      else
+        setError('')
+    }, [confirmPassword])
     
-    // useEffect(() => {
-    //   if ((password.length < 6) && password.length !== 0)
-    //     setError("Password must be at least 6 characters")
-    //   else
-    //     setError('')
-    // }, [password])
+    useEffect(() => {
+      if ((password.length < 6) && password.length !== 0)
+        setError("Password must be at least 6 characters")
+      else
+        setError('')
+    }, [password])
   
-    // useEffect(() => {
-    //   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; 
-    //   if (!emailPattern.test(email) && email.length !== 0)
-    //     setError("Invalid email")
-    //   else
-    //     setError("")
-    // }, [email])
+    useEffect(() => {
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; 
+      if (!emailPattern.test(email) && email.length !== 0)
+        setError("Invalid email")
+      else
+        setError("")
+    }, [email])
 
     return (
       <SafeAreaView style={styles.outer}>
@@ -86,7 +86,7 @@ export function SignupScreen() {
           />
           <View style={styles.specialInputGroup}>
             <Text style={styles.infoText}>
-              Select Location:
+              Location:
             </Text>
 
             <Picker
@@ -118,7 +118,7 @@ export function SignupScreen() {
           </View>
           <AppButton
             title="Next"
-            // disabled={error !== ""}
+            disabled={error !== "" || email.length == 0 || password.length == 0 || confirmPassword.length == 0}
             onPress={() => navigation.navigate('RegisterForm', { email, password, currency, inWFK })}
           />
         </View>
@@ -195,6 +195,6 @@ const styles = StyleSheet.create({
       { scaleY: 1 },
     ],
     color: "#ccc",
-    marginTop: -12
+    marginTop: -12,
   },
 });
