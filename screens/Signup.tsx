@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AuthStackParams } from '../App';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack/lib/typescript/src/types';
@@ -84,32 +84,33 @@ export function SignupScreen() {
             selectionColor={'white'}
             style={styles.input}
           />
-          <View style={styles.specialInputGroup}>
+          <View style={[styles.specialInputGroup, { marginTop: Platform.OS === "ios" ? 40: 0 }]}>
             <Text style={styles.infoText}>
               Location:
             </Text>
 
             <Picker
               selectedValue={currency}
-              style={styles.picker}
+              style={[styles.picker, { marginTop: Platform.OS === "android" ? -12 : -75 }]}
               onValueChange={setCurrency}
+              itemStyle={{ color: "white" }}
             >
-              <Picker.Item label="India" value="inr" />
-              <Picker.Item label="US" value="usd" />
+              <Picker.Item label="India" value="inr" style={{ color: "white" }} />
+              <Picker.Item label="US" value="usd" style={{ color: "white" }} />
               <Picker.Item label="Great Britain" value="gbp" />
               <Picker.Item label="Australia" value="aud" />
               <Picker.Item label="UAE" value="aed" />
             </Picker>
           </View>
 
-          <View style={styles.specialInputGroup}>
+          <View style={[styles.specialInputGroup, { marginTop: Platform.OS === "ios" ? 80 : 0, marginBottom: Platform.OS === "ios" ? 45 : 0 }]}>
             <Text style={styles.infoText}>
               Part of WFK?
             </Text>
 
             <Picker
               selectedValue={inWFK}
-              style={styles.picker}
+              style={[styles.picker, { marginTop: Platform.OS === "android" ? -12 : -75, marginLeft: -25 }]}
               onValueChange={setInWFK}
             >
               <Picker.Item label="Yes" value="yes" />
@@ -118,7 +119,7 @@ export function SignupScreen() {
           </View>
           <AppButton
             title="Next"
-            disabled={error !== "" || email.length == 0 || password.length == 0 || confirmPassword.length == 0}
+            // disabled={error !== "" || email.length == 0 || password.length == 0 || confirmPassword.length == 0}
             onPress={() => navigation.navigate('RegisterForm', { email, password, currency, inWFK })}
           />
         </View>
@@ -135,7 +136,7 @@ const styles = StyleSheet.create({
   specialInputGroup: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginLeft: 5
+    marginLeft: 5,
   },
   contrastBg: { 
     borderWidth: 0.5,
@@ -190,11 +191,13 @@ const styles = StyleSheet.create({
   picker: {
     flex: 1,
     height: 40,
-    transform: [
+    transform: Platform.OS === "android" ? [
       { scaleX: 1 }, 
       { scaleY: 1 },
+    ] : [
+      { scaleX: 0.8 }, 
+      { scaleY: 0.8 },
     ],
     color: "#ccc",
-    marginTop: -12,
   },
 });

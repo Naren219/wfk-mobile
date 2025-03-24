@@ -131,154 +131,150 @@ const RegisterForm = ({ route }: any) => {
   };
   
   return (
-    <SafeAreaView style={{ flex: 1, marginHorizontal: 20 }}>
-      <View style={[styles.shadowProp, styles.card, { marginBottom: 15 }]}>
-        <Text style={[styles.infoText, { fontSize: 18 }]}>
-          Event Pricing
-        </Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={{ flex: 1, marginHorizontal: 20 }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View style={[styles.shadowProp, styles.card, { marginBottom: 15 }]}>
+            <Text style={[styles.infoText, { fontSize: 18 }]}>
+              Event Pricing
+            </Text>
 
-        {Object.keys(events_pricing).map((key) => {
-          const event = events_pricing[key];
-          const fullName = searchByValue(events_dict, event.name)
-          
-          return (
-            <View key={event.name}>
-              <Text style={styles.infoText}>
-                {fullName}: {currencySymbols[currency_value]}
-                {(event.prices[currency_value] / 100).toFixed(2).toString()}
-              </Text>
-            </View>
-          );
-        })}
-      </View>
+            {Object.keys(events_pricing).map((key) => {
+              const event = events_pricing[key];
+              const fullName = searchByValue(events_dict, event.name)
+              
+              return (
+                <View key={event.name}>
+                  <Text style={styles.infoText}>
+                    {fullName}: {currencySymbols[currency_value]}
+                    {(event.prices[currency_value] / 100).toFixed(2).toString()}
+                  </Text>
+                </View>
+              );
+            })}
+          </View>
 
-      <Text style={{ fontSize: 15, marginBottom: Platform.OS == "ios" ? 10 : 10, color: '#333'}}>* Indicates required question</Text>
+          <Text style={{ fontSize: 15, marginBottom: Platform.OS == "ios" ? 10 : 10, color: '#333'}}>* Indicates required question</Text>
 
-      <TextInput
-        value={parentName}
-        onChangeText={setParentName}
-        placeholder="Parent's Full Name *"
-        placeholderTextColor="#ccc"
-        style={styles.inputMain}
-      />
-      <TextInput
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        placeholder="Parent's Phone Number *"
-        placeholderTextColor="#ccc"
-        style={styles.inputMain}
-      />
-      <TextInput
-        value={parentEmail}
-        onChangeText={setParentEmail}
-        keyboardType="email-address"
-        placeholder="Parent's Email Address *"
-        placeholderTextColor="#ccc"
-        style={styles.inputMain}
-      />
-      <TextInput
-        value={additionalNotes}
-        onChangeText={setAdditionalNotes}
-        multiline
-        numberOfLines={4}
-        maxLength={40}
-        placeholder="Additional Notes"
-        placeholderTextColor="#ccc"
-        style={[styles.inputMain, { height: 60 }]}
-      />
-            
-      <KeyboardAvoidingView
-        style={styles.keyboardAvoidingView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView style={styles.container}>
-          {competitors.map((competitor, index) => (
-            <View key={index} style={styles.competitorContainer}>
-              <Text style={styles.label}>Competitor {index + 1} Info {index == 0 ? "*" : ""}</Text>
+          <TextInput
+            value={parentName}
+            onChangeText={setParentName}
+            placeholder="Parent's Full Name *"
+            placeholderTextColor="#ccc"
+            style={styles.inputMain}
+          />
+          <TextInput
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+            placeholder="Parent's Phone Number *"
+            placeholderTextColor="#ccc"
+            style={styles.inputMain}
+          />
+          <TextInput
+            value={parentEmail}
+            onChangeText={setParentEmail}
+            keyboardType="email-address"
+            placeholder="Parent's Email Address *"
+            placeholderTextColor="#ccc"
+            style={styles.inputMain}
+          />
+          <TextInput
+            value={additionalNotes}
+            onChangeText={setAdditionalNotes}
+            multiline
+            numberOfLines={4}
+            maxLength={40}
+            placeholder="Additional Notes"
+            placeholderTextColor="#ccc"
+            style={[styles.inputMain, { height: 60 }]}
+          />
+          <ScrollView style={styles.container}>
+            {competitors.map((competitor, index) => (
+              <View key={index} style={styles.competitorContainer}>
+                <Text style={styles.label}>Competitor {index + 1} Info {index == 0 ? "*" : ""}</Text>
 
-              <View style={styles.inputGroup}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Name *"
-                  value={competitor.name}
-                  onChangeText={(value) => handleInputChange(index, 'name', value)}
-                />
+                <View style={styles.inputGroup}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Name *"
+                    value={competitor.name}
+                    onChangeText={(value) => handleInputChange(index, 'name', value)}
+                  />
 
+                  <Picker
+                    selectedValue={competitor.gender}
+                    style={[styles.picker, { marginTop: Platform.OS == "ios" ? -80 : -10, marginLeft: -10, width: 20 }]}
+                    onValueChange={(value) => handleInputChange(index, 'gender', value)}
+                  >
+                    <Picker.Item label="Gender *" value="" />
+                    <Picker.Item label="Male" value="male" />
+                    <Picker.Item label="Female" value="female" />
+                    <Picker.Item label="Other" value="other" />
+                  </Picker>
+                </View>
+
+                <View style={[styles.inputGroup, { width: Platform.OS === "ios" ? 200 : 250, marginBottom: Platform.OS === "ios" ? 30 : 0 }]}>
+                  <TextInput
+                    editable
+                    multiline
+                    maxLength={40}
+                    keyboardType='numeric'
+                    style={[styles.input, { height: 60 }]}
+                    placeholder={"Completed Level (as of 4/1/25) *"}
+                    value={competitor.level}
+                    onChangeText={(value) => handleInputChange(index, 'level', value)}
+                  />
+                </View>
                 <Picker
-                  selectedValue={competitor.gender}
-                  style={[styles.picker, { marginTop: Platform.OS == "ios" ? -80 : -10, marginLeft: -10, width: 20 }]}
-                  onValueChange={(value) => handleInputChange(index, 'gender', value)}
-                >
-                  <Picker.Item label="Gender *" value="" />
-                  <Picker.Item label="Male" value="male" />
-                  <Picker.Item label="Female" value="female" />
-                  <Picker.Item label="Other" value="other" />
+                    selectedValue={competitor.academy}
+                    style={[styles.picker, { marginTop: Platform.OS == "ios" ? -60 : 0 }]}
+                    onValueChange={(value) => handleInputChange(index, 'academy', value)}
+                  >
+                  <Picker.Item label="Select Academy *" value="" />
+                  {academies.map((academy) => (
+                    <Picker.Item key={academy} label={academy} value={academy} />
+                  ))}
                 </Picker>
-              </View>
+                <View style={[styles.inputGroup, { marginTop: Platform.OS == "ios" ? 70 : 0 }]}>
+                  <Picker
+                    selectedValue={competitor.ageGroup}
+                    style={[styles.picker, { marginTop: Platform.OS == "ios" ? 30 : 0 }]}
+                    onValueChange={(value) => handleInputChange(index, 'ageGroup', value)}
+                  >
+                    <Picker.Item label="Age Group *" value="" />
+                    {ages.map((age) => (
+                      <Picker.Item key={age} label={age} value={age} />
+                    ))}
+                  </Picker>
+                </View>
 
-              <View style={[styles.inputGroup, { width: 250 }]}>
-                <TextInput
-                  editable
-                  multiline
-                  maxLength={40}
-                  keyboardType='numeric'
-                  style={[styles.input, { height: 60 }]}
-                  placeholder={"Completed Level (as of 4/1/25) *"}
-                  value={competitor.level}
-                  onChangeText={(value) => handleInputChange(index, 'level', value)}
-                />
-              </View>
-              <Picker
-                  selectedValue={competitor.academy}
-                  style={[styles.picker, { marginTop: Platform.OS == "ios" ? -60 : 0 }]}
-                  onValueChange={(value) => handleInputChange(index, 'academy', value)}
-                >
-                <Picker.Item label="Select Academy *" value="" />
-                {academies.map((academy) => (
-                  <Picker.Item key={academy} label={academy} value={academy} />
-                ))}
-              </Picker>
-              <View style={[styles.inputGroup, { marginTop: Platform.OS == "ios" ? 70 : 0 }]}>
                 <Picker
-                  selectedValue={competitor.ageGroup}
-                  style={styles.picker}
-                  onValueChange={(value) => handleInputChange(index, 'ageGroup', value)}
+                  selectedValue={competitor.events}
+                  style={[styles.picker, { marginTop: Platform.OS == "ios" ? 60 : -20 }]}
+                  onValueChange={(value) => handleEventChange(index, value)}
                 >
-                  <Picker.Item label="Age Group *" value="" />
-                  {ages.map((age) => (
-                    <Picker.Item key={age} label={age} value={age} />
+                  <Picker.Item label="Select Events *" value="" />
+                  {Object.entries(events_dict).map(([event, abbr]) => (
+                    <Picker.Item key={abbr} label={event} value={abbr} />
                   ))}
                 </Picker>
               </View>
-
-              <Picker
-                selectedValue={competitor.events}
-                style={[styles.picker, { marginTop: Platform.OS == "ios" ? 60 : -20 }]}
-                onValueChange={(value) => handleEventChange(index, value)}
-              >
-                <Picker.Item label="Select Events *" value="" />
-                {Object.entries(events_dict).map(([event, abbr]) => (
-                  <Picker.Item key={abbr} label={event} value={abbr} />
-                ))}
-              </Picker>
+            ))}
+            <View style={{ marginBottom: 20 }}>
+              <Button title="+ Add Competitor" onPress={handleAddCompetitor} />
             </View>
-          ))}
-          <View style={{ marginBottom: 20 }}>
-            <Button title="+ Add Competitor" onPress={handleAddCompetitor} />
-          </View>
+          </ScrollView>
+          <AppButton
+            title="Checkout"
+            extraStyles={{ width: 110, alignSelf: "center", marginVertical: Platform.OS == "ios" ? 0 : 10 }}
+            disabled={
+              !loading || parentName.length == 0 || phoneNumber.length == 0 || parentEmail.length == 0 || competitors[0].events.length == 0
+            }
+            onPress={createAccountCheckout}
+          />
         </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
-      <AppButton
-        title="Checkout"
-        extraStyles={{ width: 110, alignSelf: "center", marginVertical: Platform.OS == "ios" ? 0 : 10 }}
-        disabled={
-          !loading || parentName.length == 0 || phoneNumber.length == 0 || parentEmail.length == 0 || competitors[0].events.length == 0
-        }
-        onPress={createAccountCheckout}
-      />
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   )
 }
 
