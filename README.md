@@ -1,1 +1,3 @@
-## competition registration app for WFKA
+## features
+* stripe payments (multi-currency)
+* firebase integration
